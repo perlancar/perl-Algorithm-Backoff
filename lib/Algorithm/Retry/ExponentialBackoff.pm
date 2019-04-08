@@ -8,8 +8,8 @@ use warnings;
 
 use parent qw(Algorithm::Retry);
 
-our %attrspec = (
-    %Algorithm::Retry::attrspec,
+our %argspec = (
+    %Algorithm::Retry::argspec,
     delay_on_failure => {
         summary => 'Number of seconds to wait after a failure',
         schema => 'nonnegnum*',
@@ -33,15 +33,15 @@ sub _failure {
 }
 
 1;
-#ABSTRACT: Retry endlessly using a constant wait
+#ABSTRACT:
 
 =head1 SYNOPSIS
 
- use Algorithm::Retry::Constant;
+ use Algorithm::Retry::ExponentialBackoff;
 
  # 1. instantiate
 
- my $ar = Algorithm::Retry::Constant->new(
+ my $ar = Algorithm::Retry::ExponentialBackoff->new(
      delay_on_failure  => 2, # required
      #delay_on_success => 0, # optional, default 0
  );
@@ -61,6 +61,8 @@ failure, or Y second(s) (default 0) after a success.
 
 
 =head1 SEE ALSO
+
+L<https://en.wikipedia.org/wiki/Exponential_backoff>
 
 Other C<Algorithm::Retry::*> classes.
 

@@ -9,24 +9,53 @@ use warnings;
 
 use Time::HiRes qw(time);
 
+our %attrspec = (
+    max_attempts => {
+        summary => 'Maximum number consecutive failures before giving up',
+        schema => 'nonnegint*',
+        default => 0,
+        description => <<'_',
+
+0 means to retry endlessly without ever giving up. 1 means to give up after a
+single failure (i.e. no retry attempts). 2 means to retry once after a failure.
+Note that after a success, the number of attempts is reset (as expected). So if
+max_attempts is 3, and if you fail twice then succeed, then on the next failure
+the algorithm will retry again for a maximum of 3 times.
+
+_
+    },
+    jitter_factor => {
+        summary => 'How much to add randomness',
+        schema => ['float*', between=>[0, 0.5]],
+        description => <<'_',
+
+If you set this to a value larger than 0, the actual delay will be between a
+random number between original_delay * (1-jitter_factor) and original_delay *
+(1+jitter_factor).
+
+_
+    },
+);
+
 sub new {
     my ($class, %args) = @_;
 
-    my $argspec = \%{"$class\::argspec"};
-    # check known arguments
+    my $attrspec = \%{"$class\::attrspec"};
+    # check known attributes
     for my $arg (keys %args) {
-        $argspec->{$arg} or die "$class: Unknown argument '$arg'";
+        $attrspec->{$arg} or die "$class: Unknown attribute '$arg'";
     }
-    # check required arguments and set default
-    for my $arg (keys %$argspec) {
-        if ($argspec->{$arg}{req}) {
-            exists($args{$arg})
-                or die "$class: Missing required argument '$arg'";
+    # check required attributes and set default
+    for my $attr (keys %$attrspec) {
+        if ($attrspec->{$attr}{req}) {
+            exists($args{$attr})
+                or die "$class: Missing required attribute '$attr'";
         }
-        if (exists $argspec->{$arg}{default}) {
-            $args{$arg} //= $argspec->{$arg}{default};
+        if (exists $attrspec->{$attr}{default}) {
+            $args{$attr} //= $attrspec->{$attr}{default};
         }
     }
+    $args{_attempts} = 0;
     bless \%args, $class;
 }
 
@@ -42,12 +71,24 @@ sub _success_or_failure {
 
 sub success {
     my $self = shift;
-    $self->_success_or_failure(1, @_);
+    $self->{_attempts} = 0;
+    $self->_add_jitter($self->_success_or_failure(1, @_));
 }
 
 sub failure {
     my $self = shift;
-    $self->_success_or_failure(0, @_);
+    $self->{_attempts}++;
+    return -1 if $self->{max_attempts} &&
+        $self->{_attempts} >= $self->{max_attempts};
+    $self->_add_jitter($self->_success_or_failure(0, @_));
+}
+
+sub _add_jitter {
+    my ($self, $delay) = @_;
+    return $delay unless $delay && $self->{jitter_factor};
+    my $min = $delay * (1-$self->{jitter_factor});
+    my $max = $delay * (1+$self->{jitter_factor});
+    $min + ($max-$min)*rand();
 }
 
 1;
