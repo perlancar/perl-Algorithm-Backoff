@@ -7,7 +7,7 @@ use Test::More 0.98;
 
 use Algorithm::Retry::Constant;
 
-# XXX test each strategy
+# XXX test max_attempts for each strategy
 subtest "attr: max_attempts" => sub {
     my $ar;
 
@@ -30,10 +30,30 @@ subtest "attr: max_attempts" => sub {
         max_attempts => 2,
     );
     isnt($ar->failure(1), -1);
-    is  ($ar->failure(2), -1);
-    $ar->success(2);
+    is  ($ar->failure(1), -1);
+    $ar->success(1);
     isnt($ar->failure(1), -1);
-    is  ($ar->failure(2), -1);
+    is  ($ar->failure(1), -1);
+};
+
+# XXX test timestamp for each strategy
+subtest "arg: timestamp" => sub {
+    my $ar;
+
+    $ar = Algorithm::Retry::Constant->new(
+        delay_on_failure => 2,
+        max_attempts => 0,
+    );
+
+    is($ar->failure(1), 2);
+    # we have waited for a second, so the delay is just 2-1 = 1 sec
+    is($ar->failure(2), 1);
+    # we have waited for two seconds, so the delay is just 2-2 = 0 sec
+    is($ar->failure(4), 0);
+    # we have waited for three seconds, so the delay is just 0 sec
+    is($ar->failure(7), 0);
+    # we haven't waited, so the delay is still 2 secs
+    is($ar->failure(7), 2);
 };
 
 # XXX test each strategy
@@ -45,7 +65,7 @@ subtest "attr: jitter_factor" => sub {
     );
 
     rand_between_ok(sub { $ar->failure(1) }, 2*(1-0.1), 2*(1+0.1));
-    rand_between_ok(sub { $ar->success(2) }, 3*(1-0.1), 3*(1+0.1));
+    rand_between_ok(sub { $ar->success(1) }, 3*(1-0.1), 3*(1+0.1));
 };
 
 subtest "timestamp must not decrease" => sub {
@@ -67,8 +87,10 @@ sub rand_between_ok(&$$) {
     my %res;
     for (1..10) {
         my $res = $block->();
-        ok(0, "Result #$_ is not between $min and $max")
-            if $res < $min || $res > $max;
+        do {
+            ok(0, "Result #$_ is not between $min and $max");
+            last;
+        } if $res < $min || $res > $max;
         push @res, $res;
         $res{ $res+0 }++;
     }

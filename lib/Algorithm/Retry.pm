@@ -43,12 +43,40 @@ _
     },
 );
 
+our %attr_delay_on_failure = (
+    delay_on_failure => {
+        summary => 'Number of seconds to wait after a failure',
+        schema => 'nonnegnum*',
+        req => 1,
+    },
+);
+
+our %attr_delay_on_success = (
+    delay_on_success => {
+        summary => 'Number of seconds to wait after a success',
+        schema => 'nonnegnum*',
+        default => 0,
+    },
+);
+
+our %attr_max_delay = (
+    max_delay => {
+        summary => 'Maximum delay time, in seconds',
+        schema => 'ufloat*',
+    },
+);
+
 $SPEC{new} = {
     v => 1.1,
     is_class_meth => 1,
+    is_func => 0,
     args => {
         %attr_max_attempts,
         %attr_jitter_factor,
+    },
+    result_naked => 1,
+    result => {
+        schema => 'obj*',
     },
 };
 sub new {
@@ -81,21 +109,37 @@ sub _success_or_failure {
     $timestamp >= $self->{_last_timestamp} or
         die ref($self).": Decreasing timestamp ".
         "($self->{_last_timestamp} -> $timestamp)";
-    $is_success ? $self->_success($timestamp) : $self->_failure($timestamp);
+    my $res = $is_success ?
+        $self->_success($timestamp) : $self->_failure($timestamp);
+    $res = $self->{max_delay}
+        if defined $self->{max_delay} && $res > $self->{max_delay};
+    $res;
 }
 
 sub success {
-    my $self = shift;
+    my ($self, $timestamp) = @_;
+
     $self->{_attempts} = 0;
-    $self->_add_jitter($self->_success_or_failure(1, @_));
+
+    my $res0 = $self->_success_or_failure(1, $timestamp);
+    $res0 -= ($timestamp - $self->{_last_timestamp});
+    $self->{_last_timestamp} = $timestamp;
+    return 0 if $res0 < 0;
+    $self->_add_jitter($res0);
 }
 
 sub failure {
-    my $self = shift;
+    my ($self, $timestamp) = @_;
+
     $self->{_attempts}++;
     return -1 if $self->{max_attempts} &&
         $self->{_attempts} >= $self->{max_attempts};
-    $self->_add_jitter($self->_success_or_failure(0, @_));
+
+    my $res0 = $self->_success_or_failure(0, $timestamp);
+    $res0 -= ($timestamp - $self->{_last_timestamp});
+    $self->{_last_timestamp} = $timestamp;
+    return 0 if $res0 < 0;
+    $self->_add_jitter($res0);
 }
 
 sub _add_jitter {

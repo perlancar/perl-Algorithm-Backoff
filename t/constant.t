@@ -16,9 +16,11 @@ subtest "basics" => sub {
     );
 
     is($ar->success(1), 1);
-    is($ar->success(2), 1);
-    is($ar->failure(3), 2);
-    is($ar->failure(4), 2);
+    is($ar->success(1), 1);
+    is($ar->failure(1), 2);
+    is($ar->failure(1), 2);
+    is($ar->failure(2), 1); # timestamp
+    is($ar->failure(4), 0); # timestamp
 };
 
 # XXX test jitters

@@ -13,19 +13,16 @@ our %SPEC;
 $SPEC{new} = {
     v => 1.1,
     is_class_meth => 1,
+    is_func => 0,
     args => {
         %Algorithm::Retry::attr_max_attempts,
         %Algorithm::Retry::attr_jitter_factor,
-        delay_on_failure => {
-            summary => 'Number of seconds to wait after a failure',
-            schema => 'nonnegnum*',
-            req => 1,
-        },
-        delay_on_success => {
-            summary => 'Number of seconds to wait after a success',
-            schema => 'nonnegnum*',
-            default => 0,
-        },
+        %Algorithm::Retry::attr_delay_on_failure,
+        %Algorithm::Retry::attr_delay_on_success,
+    },
+    result_naked => 1,
+    result => {
+        schema => 'obj*',
     },
 };
 
@@ -71,11 +68,9 @@ failure, or Y second(s) (default 0) after a success. Some randomness can be
 introduced to avoid "thundering herd problem".
 
 
-=head1 METHODS
-
-=head2 new
-
 =head1 SEE ALSO
+
+L<Algorithm::Retry>
 
 Other C<Algorithm::Retry::*> classes.
 
