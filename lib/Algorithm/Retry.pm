@@ -14,7 +14,7 @@ our %SPEC;
 our %attr_max_attempts = (
     max_attempts => {
         summary => 'Maximum number consecutive failures before giving up',
-        schema => 'nonnegint*',
+        schema => 'uint*',
         default => 0,
         description => <<'_',
 
@@ -46,7 +46,7 @@ _
 our %attr_delay_on_failure = (
     delay_on_failure => {
         summary => 'Number of seconds to wait after a failure',
-        schema => 'nonnegnum*',
+        schema => 'ufloat*',
         req => 1,
     },
 );
@@ -54,7 +54,7 @@ our %attr_delay_on_failure = (
 our %attr_delay_on_success = (
     delay_on_success => {
         summary => 'Number of seconds to wait after a success',
-        schema => 'nonnegnum*',
+        schema => 'ufloat*',
         default => 0,
     },
 );
@@ -177,6 +177,30 @@ This distribution provides several classes that implement various retry/backoff
 strategies.
 
 This class (C<Algorithm::Retry>) is a base class only.
+
+
+=head1 append:METHODS
+
+=head2 success
+
+Usage:
+
+ my $secs = $obj->success([ $timestamp ]);
+
+Log a successful attempt. If not specified, C<$timestamp> defaults to current
+time. Will return the suggested number of seconds to wait before doing another
+attempt.
+
+=head2 failure
+
+Usage:
+
+ my $secs = $obj->failure([ $timestamp ]);
+
+Log a failed attempt. If not specified, C<$timestamp> defaults to current time.
+Will return the suggested number of seconds to wait before doing another
+attempt, or -1 if it suggests that one gives up (e.g. if C<max_attempts>
+parameter has been exceeded).
 
 
 =head1 SEE ALSO
