@@ -21,5 +21,7 @@ subtest "basics" => sub {
     is($ar->failure(4), 2);
 };
 
+# XXX test jitters
+
 DONE_TESTING:
 done_testing;

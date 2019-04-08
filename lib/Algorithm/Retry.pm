@@ -9,7 +9,9 @@ use warnings;
 
 use Time::HiRes qw(time);
 
-our %attrspec = (
+our %SPEC;
+
+our %attr_max_attempts = (
     max_attempts => {
         summary => 'Maximum number consecutive failures before giving up',
         schema => 'nonnegint*',
@@ -24,6 +26,9 @@ the algorithm will retry again for a maximum of 3 times.
 
 _
     },
+);
+
+our %attr_jitter_factor = (
     jitter_factor => {
         summary => 'How much to add randomness',
         schema => ['float*', between=>[0, 0.5]],
@@ -31,16 +36,26 @@ _
 
 If you set this to a value larger than 0, the actual delay will be between a
 random number between original_delay * (1-jitter_factor) and original_delay *
-(1+jitter_factor).
+(1+jitter_factor). Jitters are usually added to avoid so-called "thundering
+herd" problem.
 
 _
     },
 );
 
+$SPEC{new} = {
+    v => 1.1,
+    is_class_meth => 1,
+    args => {
+        %attr_max_attempts,
+        %attr_jitter_factor,
+    },
+};
 sub new {
     my ($class, %args) = @_;
 
-    my $attrspec = \%{"$class\::attrspec"};
+    my $attrspec = ${"$class\::SPEC"}{new}{args};
+
     # check known attributes
     for my $arg (keys %args) {
         $attrspec->{$arg} or die "$class: Unknown attribute '$arg'";
@@ -92,14 +107,13 @@ sub _add_jitter {
 }
 
 1;
-#ABSTRACT: Various retry algorithms/strategies
+#ABSTRACT: Various retry/backoff strategies
 
 =head1 SYNOPSIS
 
+ # 1. pick a strategy and instantiate
+
  use Algorithm::Retry::Constant;
-
- # 1. instantiate a strategy
-
  my $ar = Algorithm::Retry::Constant->new(
      delay_on_failure  => 2, # required
      #delay_on_success => 0, # optional, default 0
@@ -115,8 +129,10 @@ sub _add_jitter {
 
 =head1 DESCRIPTION
 
-This distribution provides several classes that implement various retry
+This distribution provides several classes that implement various retry/backoff
 strategies.
+
+This class (C<Algorithm::Retry>) is a base class only.
 
 
 =head1 SEE ALSO

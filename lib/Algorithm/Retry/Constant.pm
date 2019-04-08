@@ -8,19 +8,26 @@ use warnings;
 
 use parent qw(Algorithm::Retry);
 
-our %attrspec = (
-    %Algorithm::Retry::attrspec,
-    delay_on_failure => {
-        summary => 'Number of seconds to wait after a failure',
-        schema => 'nonnegnum*',
-        req => 1,
+our %SPEC;
+
+$SPEC{new} = {
+    v => 1.1,
+    is_class_meth => 1,
+    args => {
+        %Algorithm::Retry::attr_max_attempts,
+        %Algorithm::Retry::attr_jitter_factor,
+        delay_on_failure => {
+            summary => 'Number of seconds to wait after a failure',
+            schema => 'nonnegnum*',
+            req => 1,
+        },
+        delay_on_success => {
+            summary => 'Number of seconds to wait after a success',
+            schema => 'nonnegnum*',
+            default => 0,
+        },
     },
-    delay_on_success => {
-        summary => 'Number of seconds to wait after a success',
-        schema => 'nonnegnum*',
-        default => 0,
-    },
-);
+};
 
 sub _success {
     my ($self, $timestamp) = @_;
@@ -33,7 +40,7 @@ sub _failure {
 }
 
 1;
-#ABSTRACT: Retry endlessly using a constant wait
+#ABSTRACT: Retry using a constant wait time
 
 =head1 SYNOPSIS
 
@@ -42,12 +49,15 @@ sub _failure {
  # 1. instantiate
 
  my $ar = Algorithm::Retry::Constant->new(
+     #max_attempts     => 0, # optional, default 0 (retry endlessly)
+     #jitter_factor    => 0, # optional, set to positive value to add randomness
      delay_on_failure  => 2, # required
      #delay_on_success => 0, # optional, default 0
  );
 
  # 2. log success/failure and get a new number of seconds to delay, timestamp is
- # optional but must be monotonically increasing.
+ # optional argument (default is current time) but must be monotonically
+ # increasing.
 
  my $secs = $ar->failure(1554652553); # => 2
  my $secs = $ar->success();           # => 0
@@ -57,8 +67,13 @@ sub _failure {
 =head1 DESCRIPTION
 
 This retry strategy is one of the simplest: it waits X second(s) after each
-failure, or Y second(s) (default 0) after a success.
+failure, or Y second(s) (default 0) after a success. Some randomness can be
+introduced to avoid "thundering herd problem".
 
+
+=head1 METHODS
+
+=head2 new
 
 =head1 SEE ALSO
 
