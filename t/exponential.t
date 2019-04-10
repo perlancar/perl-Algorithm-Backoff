@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More 0.98;
 
-use Algorithm::Backoff::ExponentialBackoff;
+use Algorithm::Backoff::Exponential;
 
 #subtest "required arguments" => sub {
 #};
@@ -12,7 +12,7 @@ use Algorithm::Backoff::ExponentialBackoff;
 # XXX test attr: max_attempts
 
 subtest "attr: initial_delay, max_delay, delay_on_success" => sub {
-    my $ar = Algorithm::Backoff::ExponentialBackoff->new(
+    my $ar = Algorithm::Backoff::Exponential->new(
         delay_on_success => 1,
         initial_delay => 5,
         max_delay => 100,
@@ -28,7 +28,7 @@ subtest "attr: initial_delay, max_delay, delay_on_success" => sub {
 };
 
 subtest "attr: exponent_base" => sub {
-    my $ar = Algorithm::Backoff::ExponentialBackoff->new(
+    my $ar = Algorithm::Backoff::Exponential->new(
         initial_delay => 5,
         exponent_base => 3,
     );

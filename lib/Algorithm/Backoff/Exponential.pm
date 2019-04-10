@@ -1,4 +1,4 @@
-package Algorithm::Backoff::ExponentialBackoff;
+package Algorithm::Backoff::Exponential;
 
 # DATE
 # VERSION
@@ -53,11 +53,11 @@ sub _failure {
 
 =head1 SYNOPSIS
 
- use Algorithm::Backoff::ExponentialBackoff;
+ use Algorithm::Backoff::Exponential;
 
  # 1. instantiate
 
- my $ar = Algorithm::Backoff::ExponentialBackoff->new(
+ my $ar = Algorithm::Backoff::Exponential->new(
      #consider_actual_delay => 1, # optional, default 0
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0.25, # optional, default 0
