@@ -12,7 +12,7 @@ subtest "attr: max_attempts" => sub {
     my $ar;
 
     $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay => 2,
         max_attempts => 0,
     );
     isnt($ar->failure(1), -1);
@@ -20,13 +20,13 @@ subtest "attr: max_attempts" => sub {
     isnt($ar->failure(3), -1);
 
     $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay => 2,
         max_attempts => 1,
     );
     is($ar->failure(1), -1);
 
     $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay => 2,
         max_attempts => 2,
     );
     isnt($ar->failure(1), -1);
@@ -41,7 +41,7 @@ subtest "arg: timestamp" => sub {
     my $ar;
 
     $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay => 2,
         max_attempts => 0,
     );
 
@@ -59,7 +59,7 @@ subtest "arg: timestamp" => sub {
 # XXX test each strategy
 subtest "attr: jitter_factor" => sub {
     my $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay => 2,
         delay_on_success => 3,
         jitter_factor => 0.1,
     );
@@ -70,7 +70,7 @@ subtest "attr: jitter_factor" => sub {
 
 subtest "timestamp must not decrease" => sub {
     my $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay => 2,
     );
 
     $ar->success(2);

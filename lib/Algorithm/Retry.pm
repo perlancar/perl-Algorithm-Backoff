@@ -43,14 +43,6 @@ _
     },
 );
 
-our %attr_delay_on_failure = (
-    delay_on_failure => {
-        summary => 'Number of seconds to wait after a failure',
-        schema => 'ufloat*',
-        req => 1,
-    },
-);
-
 our %attr_delay_on_success = (
     delay_on_success => {
         summary => 'Number of seconds to wait after a success',
@@ -162,7 +154,7 @@ sub _add_jitter {
 
  use Algorithm::Retry::Constant;
  my $ar = Algorithm::Retry::Constant->new(
-     delay_on_failure  => 2, # required
+     delay             => 2, # required
      #delay_on_success => 0, # optional, default 0
  );
 

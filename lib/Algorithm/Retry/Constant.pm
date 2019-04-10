@@ -17,8 +17,12 @@ $SPEC{new} = {
     args => {
         %Algorithm::Retry::attr_max_attempts,
         %Algorithm::Retry::attr_jitter_factor,
-        %Algorithm::Retry::attr_delay_on_failure,
         %Algorithm::Retry::attr_delay_on_success,
+        delay => {
+            summary => 'Number of seconds to wait after a failure',
+            schema => 'ufloat*',
+            req => 1,
+        },
     },
     result_naked => 1,
     result => {
@@ -33,7 +37,7 @@ sub _success {
 
 sub _failure {
     my ($self, $timestamp) = @_;
-    $self->{delay_on_failure};
+    $self->{delay};
 }
 
 1;
@@ -48,7 +52,7 @@ sub _failure {
  my $ar = Algorithm::Retry::Constant->new(
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0, # optional, set to positive value to add randomness
-     delay_on_failure  => 2, # required
+     delay             => 2, # required
      #delay_on_success => 0, # optional, default 0
  );
 

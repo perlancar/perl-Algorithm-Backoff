@@ -12,7 +12,7 @@ use Algorithm::Retry::Constant;
 
 subtest "basics" => sub {
     my $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay            => 2,
         delay_on_success => 1,
     );
 
@@ -25,7 +25,7 @@ subtest "basics" => sub {
 
     # test using real timestamps
     $ar = Algorithm::Retry::Constant->new(
-        delay_on_failure => 2,
+        delay            => 2,
         delay_on_success => 1,
     );
     delta_ok($ar->success, 1);
