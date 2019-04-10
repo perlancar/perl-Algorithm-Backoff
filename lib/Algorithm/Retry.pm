@@ -11,6 +11,25 @@ use Time::HiRes qw(time);
 
 our %SPEC;
 
+our %attr_consider_actual_delay = (
+    consider_actual_delay => {
+        summary => 'Whether to consider actual delay',
+        schema => ['bool*'],
+        default => 0,
+        description => <<'_',
+
+If set to true, will take into account the actual delay (timestamp difference).
+For example, when using the Constant strategy of delay=2, you log failure()
+again right after the previous failure() (i.e. specify the same timestamp).
+failure() will then return ~2+2 = 4 seconds. On the other hand, if you waited 2
+seconds before calling failure() again (i.e. specify the timestamp that is 2
+seconds larger than the previous timestamp), failure() will return 2 seconds.
+And if you waited 4 seconds or more, failure() will return 0.
+
+_
+    },
+);
+
 our %attr_max_attempts = (
     max_attempts => {
         summary => 'Maximum number consecutive failures before giving up',
@@ -96,15 +115,26 @@ sub new {
 
 sub _success_or_failure {
     my ($self, $is_success, $timestamp) = @_;
+
     $self->{_last_timestamp} //= $timestamp;
     $timestamp >= $self->{_last_timestamp} or
         die ref($self).": Decreasing timestamp ".
         "($self->{_last_timestamp} -> $timestamp)";
-    my $res = $is_success ?
+    my $delay = $is_success ?
         $self->_success($timestamp) : $self->_failure($timestamp);
-    $res = $self->{max_delay}
-        if defined $self->{max_delay} && $res > $self->{max_delay};
-    $res;
+    $delay = $self->{max_delay}
+        if defined $self->{max_delay} && $delay > $self->{max_delay};
+    $delay;
+}
+
+sub _consider_actual_delay {
+    my ($self, $delay, $timestamp) = @_;
+
+    $self->{_last_delay} //= 0;
+    my $actual_delay = $timestamp - $self->{_last_timestamp};
+    my $new_delay = $delay + $self->{_last_delay} - $actual_delay;
+    $self->{_last_delay} = $new_delay;
+    $new_delay;
 }
 
 sub success {
@@ -114,11 +144,13 @@ sub success {
 
     $self->{_attempts} = 0;
 
-    my $res0 = $self->_success_or_failure(1, $timestamp);
-    $res0 -= ($timestamp - $self->{_last_timestamp});
+    my $delay = $self->_success_or_failure(1, $timestamp);
+    $delay = $self->_consider_actual_delay($delay, $timestamp)
+        if $self->{consider_actual_delay};
     $self->{_last_timestamp} = $timestamp;
-    return 0 if $res0 < 0;
-    $self->_add_jitter($res0);
+    return 0 if $delay < 0;
+
+    $self->_add_jitter($delay);
 }
 
 sub failure {
@@ -130,11 +162,13 @@ sub failure {
     return -1 if $self->{max_attempts} &&
         $self->{_attempts} >= $self->{max_attempts};
 
-    my $res0 = $self->_success_or_failure(0, $timestamp);
-    $res0 -= ($timestamp - $self->{_last_timestamp});
+    my $delay = $self->_success_or_failure(0, $timestamp);
+    $delay = $self->_consider_actual_delay($delay, $timestamp)
+        if $self->{consider_actual_delay};
     $self->{_last_timestamp} = $timestamp;
-    return 0 if $res0 < 0;
-    $self->_add_jitter($res0);
+    return 0 if $delay < 0;
+
+    $self->_add_jitter($delay);
 }
 
 sub _add_jitter {
@@ -161,9 +195,9 @@ sub _add_jitter {
  # 2. log success/failure and get a new number of seconds to delay, timestamp is
  # optional but must be monotonically increasing.
 
- my $secs = $ar->failure(1554652553); # => 2
- my $secs = $ar->success();           # => 0
- my $secs = $ar->failure();           # => 2
+ my $secs = $ar->failure(); # => 2
+ my $secs = $ar->success(); # => 0
+ my $secs = $ar->failure(); # => 2
 
 
 =head1 DESCRIPTION

@@ -20,8 +20,8 @@ subtest "basics" => sub {
     is($ar->success(1), 1);
     is($ar->failure(1), 2);
     is($ar->failure(1), 2);
-    is($ar->failure(2), 1); # test timestamp change
-    is($ar->failure(4), 0); # test timestamp change
+    is($ar->failure(2), 2); # test consider_actual_delay = 0
+    is($ar->failure(4), 2); # test consider_actual_delay = 0
 
     # test using real timestamps
     $ar = Algorithm::Retry::Constant->new(

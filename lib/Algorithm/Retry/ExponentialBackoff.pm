@@ -15,6 +15,7 @@ $SPEC{new} = {
     is_class_meth => 1,
     is_func => 0,
     args => {
+        %Algorithm::Retry::attr_consider_actual_delay,
         %Algorithm::Retry::attr_max_attempts,
         %Algorithm::Retry::attr_jitter_factor,
         %Algorithm::Retry::attr_delay_on_success,
@@ -57,6 +58,7 @@ sub _failure {
  # 1. instantiate
 
  my $ar = Algorithm::Retry::ExponentialBackoff->new(
+     #consider_actual_delay => 1, # optional, default 0
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0.25, # optional, default 0
      initial_delay     => 5, # required
@@ -74,7 +76,6 @@ sub _failure {
  $secs = $ar->failure();   # =>  5 (= initial_delay)
  $secs = $ar->failure();   # => 10 (5 * 2^1)
  $secs = $ar->failure();   # => 20 (5 * 2^2)
- sleep 7;
  $secs = $ar->failure();   # => 33 (5 * 2^3 - 7)
  $secs = $ar->failure();   # => 80 (5 * 2^4)
  $secs = $ar->failure();   # => 100 ( min(5 * 2^5, 100) )
