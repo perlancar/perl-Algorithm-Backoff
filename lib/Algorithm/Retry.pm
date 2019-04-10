@@ -104,7 +104,6 @@ sub new {
 
 sub _success_or_failure {
     my ($self, $is_success, $timestamp) = @_;
-    $timestamp //= time();
     $self->{_last_timestamp} //= $timestamp;
     $timestamp >= $self->{_last_timestamp} or
         die ref($self).": Decreasing timestamp ".
@@ -119,6 +118,8 @@ sub _success_or_failure {
 sub success {
     my ($self, $timestamp) = @_;
 
+    $timestamp //= time();
+
     $self->{_attempts} = 0;
 
     my $res0 = $self->_success_or_failure(1, $timestamp);
@@ -130,6 +131,8 @@ sub success {
 
 sub failure {
     my ($self, $timestamp) = @_;
+
+    $timestamp //= time();
 
     $self->{_attempts}++;
     return -1 if $self->{max_attempts} &&

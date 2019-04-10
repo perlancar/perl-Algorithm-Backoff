@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use Test::More 0.98;
+use Test::Number::Delta within => 1e-3;
 
 use Algorithm::Retry::Constant;
 
@@ -19,8 +20,16 @@ subtest "basics" => sub {
     is($ar->success(1), 1);
     is($ar->failure(1), 2);
     is($ar->failure(1), 2);
-    is($ar->failure(2), 1); # timestamp
-    is($ar->failure(4), 0); # timestamp
+    is($ar->failure(2), 1); # test timestamp change
+    is($ar->failure(4), 0); # test timestamp change
+
+    # test using real timestamps
+    $ar = Algorithm::Retry::Constant->new(
+        delay_on_failure => 2,
+        delay_on_success => 1,
+    );
+    delta_ok($ar->success, 1);
+    delta_ok($ar->failure, 2);
 };
 
 # XXX test jitters
