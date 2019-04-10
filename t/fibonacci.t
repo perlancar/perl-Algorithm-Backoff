@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More 0.98;
 
-use Algorithm::Retry::Fibonacci;
+use Algorithm::Backoff::Fibonacci;
 
 #subtest "required arguments" => sub {
 #};
@@ -12,7 +12,7 @@ use Algorithm::Retry::Fibonacci;
 # XXX test attr: max_attempts
 
 subtest "attr: initial_delay1, initial_delay2, max_delay, delay_on_success" => sub {
-    my $ar = Algorithm::Retry::Fibonacci->new(
+    my $ar = Algorithm::Backoff::Fibonacci->new(
         delay_on_success => 1,
         initial_delay1 => 2,
         initial_delay2 => 3,

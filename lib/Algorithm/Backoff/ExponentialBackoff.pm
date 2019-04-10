@@ -1,4 +1,4 @@
-package Algorithm::Retry::ExponentialBackoff;
+package Algorithm::Backoff::ExponentialBackoff;
 
 # DATE
 # VERSION
@@ -6,7 +6,7 @@ package Algorithm::Retry::ExponentialBackoff;
 use strict;
 use warnings;
 
-use parent qw(Algorithm::Retry);
+use parent qw(Algorithm::Backoff);
 
 our %SPEC;
 
@@ -15,11 +15,11 @@ $SPEC{new} = {
     is_class_meth => 1,
     is_func => 0,
     args => {
-        %Algorithm::Retry::attr_consider_actual_delay,
-        %Algorithm::Retry::attr_max_attempts,
-        %Algorithm::Retry::attr_jitter_factor,
-        %Algorithm::Retry::attr_delay_on_success,
-        %Algorithm::Retry::attr_max_delay,
+        %Algorithm::Backoff::attr_consider_actual_delay,
+        %Algorithm::Backoff::attr_max_attempts,
+        %Algorithm::Backoff::attr_jitter_factor,
+        %Algorithm::Backoff::attr_delay_on_success,
+        %Algorithm::Backoff::attr_max_delay,
         initial_delay => {
             summary => 'Initial delay for the first attempt after failure, '.
                 'in seconds',
@@ -53,11 +53,11 @@ sub _failure {
 
 =head1 SYNOPSIS
 
- use Algorithm::Retry::ExponentialBackoff;
+ use Algorithm::Backoff::ExponentialBackoff;
 
  # 1. instantiate
 
- my $ar = Algorithm::Retry::ExponentialBackoff->new(
+ my $ar = Algorithm::Backoff::ExponentialBackoff->new(
      #consider_actual_delay => 1, # optional, default 0
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0.25, # optional, default 0
@@ -100,8 +100,8 @@ It is recommended to add a jitter factor, e.g. 0.25 to add some randomness.
 
 L<https://en.wikipedia.org/wiki/Exponential_backoff>
 
-L<Algorithm::Retry>
+L<Algorithm::Backoff>
 
-Other C<Algorithm::Retry::*> classes.
+Other C<Algorithm::Backoff::*> classes.
 
 =cut

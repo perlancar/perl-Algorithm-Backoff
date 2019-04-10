@@ -5,13 +5,13 @@ use warnings;
 use Test::More 0.98;
 use Test::Number::Delta within => 1e-3;
 
-use Algorithm::Retry::Constant;
+use Algorithm::Backoff::Constant;
 
 #subtest "required arguments" => sub {
 #};
 
 subtest "basics" => sub {
-    my $ar = Algorithm::Retry::Constant->new(
+    my $ar = Algorithm::Backoff::Constant->new(
         delay            => 2,
         delay_on_success => 1,
     );
@@ -24,7 +24,7 @@ subtest "basics" => sub {
     is($ar->failure(4), 2); # test consider_actual_delay = 0
 
     # test using real timestamps
-    $ar = Algorithm::Retry::Constant->new(
+    $ar = Algorithm::Backoff::Constant->new(
         delay            => 2,
         delay_on_success => 1,
     );

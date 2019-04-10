@@ -5,13 +5,13 @@ use warnings;
 use Test::Exception;
 use Test::More 0.98;
 
-use Algorithm::Retry::Constant;
+use Algorithm::Backoff::Constant;
 
 # XXX test max_attempts for each strategy
 subtest "attr: max_attempts" => sub {
     my $ar;
 
-    $ar = Algorithm::Retry::Constant->new(
+    $ar = Algorithm::Backoff::Constant->new(
         delay => 2,
         max_attempts => 0,
     );
@@ -19,13 +19,13 @@ subtest "attr: max_attempts" => sub {
     isnt($ar->failure(2), -1);
     isnt($ar->failure(3), -1);
 
-    $ar = Algorithm::Retry::Constant->new(
+    $ar = Algorithm::Backoff::Constant->new(
         delay => 2,
         max_attempts => 1,
     );
     is($ar->failure(1), -1);
 
-    $ar = Algorithm::Retry::Constant->new(
+    $ar = Algorithm::Backoff::Constant->new(
         delay => 2,
         max_attempts => 2,
     );
@@ -40,7 +40,7 @@ subtest "attr: max_attempts" => sub {
 subtest "attr: consider_actual_delay" => sub {
     my $ar;
 
-    $ar = Algorithm::Retry::Constant->new(
+    $ar = Algorithm::Backoff::Constant->new(
         consider_actual_delay => 1,
         delay => 2,
         max_attempts => 0,
@@ -63,7 +63,7 @@ subtest "attr: consider_actual_delay" => sub {
 
 # XXX test each strategy
 subtest "attr: jitter_factor" => sub {
-    my $ar = Algorithm::Retry::Constant->new(
+    my $ar = Algorithm::Backoff::Constant->new(
         delay => 2,
         delay_on_success => 3,
         jitter_factor => 0.1,
@@ -74,7 +74,7 @@ subtest "attr: jitter_factor" => sub {
 };
 
 subtest "timestamp must not decrease" => sub {
-    my $ar = Algorithm::Retry::Constant->new(
+    my $ar = Algorithm::Backoff::Constant->new(
         delay => 2,
     );
 

@@ -1,4 +1,4 @@
-package Algorithm::Retry::Constant;
+package Algorithm::Backoff::Constant;
 
 # DATE
 # VERSION
@@ -6,7 +6,7 @@ package Algorithm::Retry::Constant;
 use strict;
 use warnings;
 
-use parent qw(Algorithm::Retry);
+use parent qw(Algorithm::Backoff);
 
 our %SPEC;
 
@@ -15,10 +15,10 @@ $SPEC{new} = {
     is_class_meth => 1,
     is_func => 0,
     args => {
-        %Algorithm::Retry::attr_consider_actual_delay,
-        %Algorithm::Retry::attr_max_attempts,
-        %Algorithm::Retry::attr_jitter_factor,
-        %Algorithm::Retry::attr_delay_on_success,
+        %Algorithm::Backoff::attr_consider_actual_delay,
+        %Algorithm::Backoff::attr_max_attempts,
+        %Algorithm::Backoff::attr_jitter_factor,
+        %Algorithm::Backoff::attr_delay_on_success,
         delay => {
             summary => 'Number of seconds to wait after a failure',
             schema => 'ufloat*',
@@ -42,15 +42,15 @@ sub _failure {
 }
 
 1;
-#ABSTRACT: Retry using a constant wait time
+#ABSTRACT: Backoff using a constant delay
 
 =head1 SYNOPSIS
 
- use Algorithm::Retry::Constant;
+ use Algorithm::Backoff::Constant;
 
  # 1. instantiate
 
- my $ar = Algorithm::Retry::Constant->new(
+ my $ar = Algorithm::Backoff::Constant->new(
      #consider_actual_delay => 1, # optional, default 0
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0, # optional, set to positive value to add randomness
@@ -69,15 +69,15 @@ sub _failure {
 
 =head1 DESCRIPTION
 
-This retry strategy is one of the simplest: it waits X second(s) after each
+This backoff strategy is one of the simplest: it waits X second(s) after each
 failure, or Y second(s) (default 0) after a success. Some randomness can be
 introduced to avoid "thundering herd problem".
 
 
 =head1 SEE ALSO
 
-L<Algorithm::Retry>
+L<Algorithm::Backoff>
 
-Other C<Algorithm::Retry::*> classes.
+Other C<Algorithm::Backoff::*> classes.
 
 =cut

@@ -1,4 +1,4 @@
-package Algorithm::Retry;
+package Algorithm::Backoff;
 
 # DATE
 # VERSION
@@ -180,14 +180,14 @@ sub _add_jitter {
 }
 
 1;
-#ABSTRACT: Various retry/backoff strategies
+#ABSTRACT: Various backoff strategies for retry
 
 =head1 SYNOPSIS
 
  # 1. pick a strategy and instantiate
 
- use Algorithm::Retry::Constant;
- my $ar = Algorithm::Retry::Constant->new(
+ use Algorithm::Backoff::Constant;
+ my $ar = Algorithm::Backoff::Constant->new(
      delay             => 2, # required
      #delay_on_success => 0, # optional, default 0
  );
@@ -202,10 +202,10 @@ sub _add_jitter {
 
 =head1 DESCRIPTION
 
-This distribution provides several classes that implement various retry/backoff
-strategies.
+This distribution provides several classes that implement various backoff
+strategies for setting delay between retry attempts.
 
-This class (C<Algorithm::Retry>) is a base class only.
+This class (C<Algorithm::Backoff>) is a base class only.
 
 
 =head1 append:METHODS
