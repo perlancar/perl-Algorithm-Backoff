@@ -57,7 +57,7 @@ sub _failure {
 
  # 1. instantiate
 
- my $ar = Algorithm::Backoff::Exponential->new(
+ my $ab = Algorithm::Backoff::Exponential->new(
      #consider_actual_delay => 1, # optional, default 0
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0.25, # optional, default 0
@@ -73,13 +73,13 @@ sub _failure {
  # for example, using the parameters initial_delay=5, max_delay=100:
 
  my $secs;
- $secs = $ar->failure();   # =>  5 (= initial_delay)
- $secs = $ar->failure();   # => 10 (5 * 2^1)
- $secs = $ar->failure();   # => 20 (5 * 2^2)
- $secs = $ar->failure();   # => 33 (5 * 2^3 - 7)
- $secs = $ar->failure();   # => 80 (5 * 2^4)
- $secs = $ar->failure();   # => 100 ( min(5 * 2^5, 100) )
- $secs = $ar->success();   # => 0 (= delay_on_success)
+ $secs = $ab->failure();   # =>  5 (= initial_delay)
+ $secs = $ab->failure();   # => 10 (5 * 2^1)
+ $secs = $ab->failure();   # => 20 (5 * 2^2)
+ $secs = $ab->failure();   # => 33 (5 * 2^3 - 7)
+ $secs = $ab->failure();   # => 80 (5 * 2^4)
+ $secs = $ab->failure();   # => 100 ( min(5 * 2^5, 100) )
+ $secs = $ab->success();   # => 0 (= delay_on_success)
 
 
 =head1 DESCRIPTION

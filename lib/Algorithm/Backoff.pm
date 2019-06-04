@@ -187,7 +187,7 @@ sub _add_jitter {
  # 1. pick a strategy and instantiate
 
  use Algorithm::Backoff::Constant;
- my $ar = Algorithm::Backoff::Constant->new(
+ my $ab = Algorithm::Backoff::Constant->new(
      delay             => 2, # required
      #delay_on_success => 0, # optional, default 0
  );
@@ -195,9 +195,9 @@ sub _add_jitter {
  # 2. log success/failure and get a new number of seconds to delay, timestamp is
  # optional but must be monotonically increasing.
 
- my $secs = $ar->failure(); # => 2
- my $secs = $ar->success(); # => 0
- my $secs = $ar->failure(); # => 2
+ my $secs = $ab->failure(); # => 2
+ my $secs = $ab->success(); # => 0
+ my $secs = $ab->failure(); # => 2
 
 
 =head1 DESCRIPTION
