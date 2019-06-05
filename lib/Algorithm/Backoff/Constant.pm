@@ -16,6 +16,7 @@ $SPEC{new} = {
     is_func => 0,
     args => {
         %Algorithm::Backoff::attr_consider_actual_delay,
+        %Algorithm::Backoff::attr_max_actual_duration,
         %Algorithm::Backoff::attr_max_attempts,
         %Algorithm::Backoff::attr_jitter_factor,
         %Algorithm::Backoff::attr_delay_on_success,
@@ -52,10 +53,11 @@ sub _failure {
 
  my $ab = Algorithm::Backoff::Constant->new(
      #consider_actual_delay => 1, # optional, default 0
-     #max_attempts     => 0, # optional, default 0 (retry endlessly)
-     #jitter_factor    => 0, # optional, set to positive value to add randomness
-     delay             => 2, # required
-     #delay_on_success => 0, # optional, default 0
+     #max_actual_duration   => 0, # optional, default 0 (retry endlessly)
+     #max_attempts          => 0, # optional, default 0 (retry endlessly)
+     #jitter_factor         => 0, # optional, set to positive value to add randomness
+     delay                  => 2, # required
+     #delay_on_success      => 0, # optional, default 0
  );
 
  # 2. log success/failure and get a new number of seconds to delay, timestamp is
@@ -70,8 +72,9 @@ sub _failure {
 =head1 DESCRIPTION
 
 This backoff strategy is one of the simplest: it waits X second(s) after each
-failure, or Y second(s) (default 0) after a success. Some randomness can be
-introduced to avoid "thundering herd problem".
+failure, or Y second(s) (default 0) after a success. There are limits on the
+number of attempts (`max_attempts`) and total duration (`max_actual_duration`).
+Some randomness can be introduced to avoid "thundering herd problem".
 
 
 =head1 SEE ALSO

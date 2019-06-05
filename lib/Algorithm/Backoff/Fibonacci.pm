@@ -16,6 +16,7 @@ $SPEC{new} = {
     is_func => 0,
     args => {
         %Algorithm::Backoff::attr_consider_actual_delay,
+        %Algorithm::Backoff::attr_max_actual_duration,
         %Algorithm::Backoff::attr_max_attempts,
         %Algorithm::Backoff::attr_jitter_factor,
         %Algorithm::Backoff::attr_delay_on_success,
@@ -70,12 +71,14 @@ sub _failure {
  # 1. instantiate
 
  my $ab = Algorithm::Backoff::Fibonacci->new(
-     #max_attempts     => 0, # optional, default 0 (retry endlessly)
-     #jitter_factor    => 0.25, # optional, default 0
-     initial_delay1    => 2, # required
-     initial_delay2    => 3, # required
-     #max_delay        => 20, # optional
-     #delay_on_success => 0, # optional, default 0
+     #consider_actual_delay => 1, # optional, default 0
+     #max_actual_duration   => 0, # optional, default 0 (retry endlessly)
+     #max_attempts          => 0, # optional, default 0 (retry endlessly)
+     #jitter_factor         => 0.25, # optional, default 0
+     initial_delay1         => 2, # required
+     initial_delay2         => 3, # required
+     #max_delay             => 20, # optional
+     #delay_on_success      => 0, # optional, default 0
  );
 
  # 2. log success/failure and get a new number of seconds to delay, timestamp is
@@ -100,8 +103,12 @@ example, if the two initial numbers are 2 and 3:
  2, 3, 5, 8, 13, 21, ...
 
 C<initial_delay1> and C<initial_delay2> are required. The other attributes are
-optional. It is recommended to add a jitter factor, e.g. 0.25 to add some
-randomness.
+optional.
+
+There are limits on the number of attempts (`max_attempts`) and total duration
+(`max_actual_duration`).
+
+It is recommended to add a jitter factor, e.g. 0.25 to add some randomness.
 
 
 =head1 SEE ALSO
