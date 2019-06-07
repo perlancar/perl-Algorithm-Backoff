@@ -223,7 +223,8 @@ sub _success_or_failure {
     $delay = $self->_consider_actual_delay($delay, $timestamp)
         if $self->{consider_actual_delay};
 
-    $delay = $self->_add_jitter($delay);
+    $delay = $self->_add_jitter($delay)
+        if $self->{jitter_factor};
 
     # keep between max(0, min_delay) and max_delay
     $delay = $self->{max_delay}
