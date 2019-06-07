@@ -108,7 +108,8 @@ optional.
 There are limits on the number of attempts (`max_attempts`) and total duration
 (`max_actual_duration`).
 
-It is recommended to add a jitter factor, e.g. 0.25 to add some randomness.
+It is recommended to add a jitter factor, e.g. 0.25 to add some randomness to
+avoid "thundering herd problem".
 
 
 =head1 SEE ALSO

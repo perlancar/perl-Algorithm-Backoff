@@ -16,6 +16,7 @@ our %attr_consider_actual_delay = (
         summary => 'Whether to consider actual delay',
         schema => ['bool*'],
         default => 0,
+        tags => ['common'],
         description => <<'_',
 
 If set to true, will take into account the actual delay (timestamp difference).
@@ -35,6 +36,7 @@ our %attr_max_actual_duration = (
         summary => 'Maximum number of seconds for all of the attempts (0 means unlimited)',
         schema => ['ufloat*'],
         default => 0,
+        tags => ['common'],
         description => <<'_',
 
 If set to a positive number, will limit the number of seconds for all of the
@@ -54,6 +56,7 @@ our %attr_max_attempts = (
         summary => 'Maximum number consecutive failures before giving up',
         schema => 'uint*',
         default => 0,
+        tags => ['common'],
         description => <<'_',
 
 0 means to retry endlessly without ever giving up. 1 means to give up after a
@@ -70,12 +73,15 @@ our %attr_jitter_factor = (
     jitter_factor => {
         summary => 'How much to add randomness',
         schema => ['float*', between=>[0, 0.5]],
+        tags => ['common'],
         description => <<'_',
 
 If you set this to a value larger than 0, the actual delay will be between a
 random number between original_delay * (1-jitter_factor) and original_delay *
 (1+jitter_factor). Jitters are usually added to avoid so-called "thundering
 herd" problem.
+
+The jitter will be applied to delay on failure as well as on success.
 
 _
     },
@@ -86,6 +92,7 @@ our %attr_delay_on_success = (
         summary => 'Number of seconds to wait after a success',
         schema => 'ufloat*',
         default => 0,
+        tags => ['common'],
     },
 );
 
@@ -93,7 +100,8 @@ our %attr_max_delay = (
     max_delay => {
         summary => 'Maximum delay time, in seconds',
         schema => 'ufloat*',
-    },
+         tags => ['common'],
+   },
 );
 
 $SPEC{new} = {
