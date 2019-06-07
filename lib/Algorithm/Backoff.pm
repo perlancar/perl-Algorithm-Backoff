@@ -103,6 +103,56 @@ our %attr_max_delay = (
    },
 );
 
+our %attr_min_delay = (
+    min_delay => {
+        summary => 'Maximum delay time, in seconds',
+        schema => 'ufloat*',
+        default => 0,
+        tags => ['common'],
+   },
+);
+
+our %attr_initial_delay = (
+    initial_delay => {
+        summary => 'Initial delay for the first attempt after failure, '.
+            'in seconds',
+        schema => 'ufloat*',
+        req => 1,
+    },
+);
+
+our %attr_delay_multiple_on_failure = (
+    delay_multiple_on_failure => {
+        summary => 'How much to multiple previous delay, upon failure (e.g. 1.5)',
+        schema => 'ufloat*',
+        req => 1,
+   },
+);
+
+our %attr_delay_multiple_on_success = (
+    delay_multiple_on_success => {
+        summary => 'How much to multiple previous delay, upon success (e.g. 0.5)',
+        schema => 'ufloat*',
+        req => 1,
+   },
+);
+
+our %attr_delay_increment_on_failure = (
+    delay_increment_on_failure => {
+        summary => 'How much to add to previous delay, in seconds, upon failure (e.g. 5)',
+        schema => 'float*',
+        req => 1,
+   },
+);
+
+our %attr_delay_increment_on_success = (
+    delay_increment_on_success => {
+        summary => 'How much to add to previous delay, in seconds, upon success (e.g. -5)',
+        schema => 'float*',
+        req => 1,
+   },
+);
+
 $SPEC{new} = {
     v => 1.1,
     is_class_meth => 1,
