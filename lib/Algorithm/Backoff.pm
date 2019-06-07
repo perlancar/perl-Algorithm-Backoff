@@ -31,6 +31,26 @@ _
     },
 );
 
+our %attr_max_actual_duration = (
+    max_actual_duration => {
+        summary => 'Maximum number of seconds for all of the attempts (0 means unlimited)',
+        schema => ['ufloat*'],
+        default => 0,
+        tags => ['common'],
+        description => <<'_',
+
+If set to a positive number, will limit the number of seconds for all of the
+attempts. This setting is used to limit the amount of time you are willing to
+spend on a task. For example, when using the Exponential strategy of
+initial_delay=3 and max_attempts=10, the delays will be 3, 6, 12, 24, ... If
+failures are logged according to the suggested delays, and max_actual_duration
+is set to 21 seconds, then the third failure() will return -1 instead of 24
+because 3+6+12 >= 21, even though max_attempts has not been exceeded.
+
+_
+    },
+);
+
 our %attr_max_attempts = (
     max_attempts => {
         summary => 'Maximum number consecutive failures before giving up',
@@ -72,7 +92,6 @@ our %attr_delay_on_success = (
         summary => 'Number of seconds to wait after a success',
         schema => 'ufloat*',
         default => 0,
-        tags => ['common'],
     },
 );
 
@@ -104,6 +123,7 @@ sub new {
 
     # check known attributes
     for my $arg (keys %args) {
+        $arg =~ /\A(_start_timestamp)\z/ and next;
         $attrspec->{$arg} or die "$class: Unknown attribute '$arg'";
     }
     # check required attributes and set default
@@ -117,6 +137,7 @@ sub new {
         }
     }
     $args{_attempts} = 0;
+    $args{_start_timestamp} //= time();
     bless \%args, $class;
 }
 
@@ -164,6 +185,10 @@ sub failure {
     my ($self, $timestamp) = @_;
 
     $timestamp //= time();
+
+    return -1 if defined $self->{max_actual_duration} &&
+        $self->{max_actual_duration} > 0 &&
+        $timestamp - $self->{_start_timestamp} >= $self->{max_actual_duration};
 
     $self->{_attempts}++;
     return -1 if $self->{max_attempts} &&

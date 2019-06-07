@@ -1,3 +1,19 @@
+0.005   2019-06-07 (PERLANCAR)
+
+        - No functional changes.
+
+        - [doc] Minor tweaks.
+
+        - [meta] Add tag to common attributes.
+
+
+0.004   2019-06-05 (PERLANCAR)
+
+	- Add common attribute: max_actual_duration.
+
+	- [doc] Update variable name in Synopsis.
+
+
 0.003   2019-04-10 (PERLANCAR)
 
         - Rename module/distro from Algorithm-Retry -> Algorithm-Backoff.
