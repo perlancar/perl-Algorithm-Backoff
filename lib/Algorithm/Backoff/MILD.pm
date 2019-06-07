@@ -33,23 +33,25 @@ $SPEC{new} = {
 
 sub _success {
     my ($self, $timestamp) = @_;
-    $self->{_prev_delay} //= $self->{initial_delay};
+
+    unless (defined $self->{_prev_delay}) {
+        return $self->{_prev_delay} = $self->{initial_delay};
+    }
+
     my $delay = $self->{_prev_delay} + $self->{delay_increment_on_success};
-    $delay = $self->{max_delay} if defined $self->{max_delay} && $delay > $self->{max_delay};
-    $delay = $self->{min_delay} if defined $self->{min_delay} && $delay < $self->{min_delay};
-    $delay = 0 if $delay < 0;
-    $self->{_prev_delay} = $delay;
+
     $delay;
 }
 
 sub _failure {
     my ($self, $timestamp) = @_;
-    $self->{_prev_delay} //= $self->{initial_delay};
+
+    unless (defined $self->{_prev_delay}) {
+        return $self->{_prev_delay} = $self->{initial_delay};
+    }
+
     my $delay = $self->{_prev_delay} * $self->{delay_multiple_on_failure};
-    $delay = $self->{max_delay} if defined $self->{max_delay} && $delay > $self->{max_delay};
-    $delay = $self->{min_delay} if defined $self->{min_delay} && $delay < $self->{min_delay};
-    $delay = 0 if $delay < 0;
-    $self->{_prev_delay} = $delay;
+
     $delay;
 }
 
