@@ -92,7 +92,6 @@ our %attr_delay_on_success = (
         summary => 'Number of seconds to wait after a success',
         schema => 'ufloat*',
         default => 0,
-        tags => ['common'],
     },
 );
 
