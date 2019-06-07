@@ -234,6 +234,7 @@ sub _success_or_failure {
         if defined $self->{min_delay} && $delay < $self->{min_delay};
 
     $self->{_last_timestamp} = $timestamp;
+    $self->{_prev_delay}     = $delay;
     $delay;
 }
 
