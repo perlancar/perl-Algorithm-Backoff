@@ -69,7 +69,7 @@ sub _failure {
 
  # 1. instantiate
 
- my $ar = Algorithm::Backoff::Fibonacci->new(
+ my $ab = Algorithm::Backoff::Fibonacci->new(
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0.25, # optional, default 0
      initial_delay1    => 2, # required
@@ -82,15 +82,15 @@ sub _failure {
  # optional but must be monotonically increasing.
 
  my $secs;
- $secs = $ar->failure();   # =>  2 (= initial_delay1)
- $secs = $ar->failure();   # =>  3 (= initial_delay2)
- $secs = $ar->failure();   # =>  5 (= 2+3)
- $secs = $ar->failure();   # =>  8 (= 3+5)
+ $secs = $ab->failure();   # =>  2 (= initial_delay1)
+ $secs = $ab->failure();   # =>  3 (= initial_delay2)
+ $secs = $ab->failure();   # =>  5 (= 2+3)
+ $secs = $ab->failure();   # =>  8 (= 3+5)
  sleep 1;
- $secs = $ar->failure();   # => 12 (= 5+8 -1)
- $secs = $ar->failure();   # => 20 (= min(13+8, 20) = max_delay)
+ $secs = $ab->failure();   # => 12 (= 5+8 -1)
+ $secs = $ab->failure();   # => 20 (= min(13+8, 20) = max_delay)
 
- $secs = $ar->success();   # =>  0 (= delay_on_success)
+ $secs = $ab->success();   # =>  0 (= delay_on_success)
 
 =head1 DESCRIPTION
 

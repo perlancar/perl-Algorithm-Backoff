@@ -50,7 +50,7 @@ sub _failure {
 
  # 1. instantiate
 
- my $ar = Algorithm::Backoff::Constant->new(
+ my $ab = Algorithm::Backoff::Constant->new(
      #consider_actual_delay => 1, # optional, default 0
      #max_attempts     => 0, # optional, default 0 (retry endlessly)
      #jitter_factor    => 0, # optional, set to positive value to add randomness
@@ -62,9 +62,9 @@ sub _failure {
  # optional argument (default is current time) but must be monotonically
  # increasing.
 
- my $secs = $ar->failure(1554652553); # => 2
- my $secs = $ar->success();           # => 0
- my $secs = $ar->failure();           # => 2
+ my $secs = $ab->failure(1554652553); # => 2
+ my $secs = $ab->success();           # => 0
+ my $secs = $ab->failure();           # => 2
 
 
 =head1 DESCRIPTION
