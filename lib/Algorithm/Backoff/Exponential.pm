@@ -89,11 +89,12 @@ This backoff algorithm calculates the next delay as:
  initial_delay * exponent_base ** (attempts-1)
 
 Only the C<initial_delay> is required. C<exponent_base> is 2 by default (binary
-expoential). For the first failure attempt (C<attempts> = 1) the delay equals
+exponential). For the first failure attempt (C<attempts> = 1) the delay equals
 the initial delay. Then it is doubled, quadrupled, and so on (using the default
 exponent base of 2).
 
-It is recommended to add a jitter factor, e.g. 0.25 to add some randomness.
+It is recommended to add a jitter factor, e.g. 0.25 to add some randomness to
+avoid "thundering herd problem".
 
 
 =head1 SEE ALSO

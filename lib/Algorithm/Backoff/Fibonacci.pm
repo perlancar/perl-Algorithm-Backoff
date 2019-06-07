@@ -100,8 +100,10 @@ example, if the two initial numbers are 2 and 3:
  2, 3, 5, 8, 13, 21, ...
 
 C<initial_delay1> and C<initial_delay2> are required. The other attributes are
-optional. It is recommended to add a jitter factor, e.g. 0.25 to add some
-randomness.
+optional.
+
+It is recommended to add a jitter factor, e.g. 0.25 to add some randomness to
+avoid "thundering herd problem".
 
 
 =head1 SEE ALSO
