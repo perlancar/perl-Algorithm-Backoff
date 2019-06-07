@@ -20,6 +20,7 @@ $SPEC{new} = {
         %Algorithm::Backoff::attr_max_attempts,
         %Algorithm::Backoff::attr_jitter_factor,
         %Algorithm::Backoff::attr_delay_on_success,
+        %Algorithm::Backoff::attr_min_delay,
         %Algorithm::Backoff::attr_max_delay,
         initial_delay1 => {
             summary => 'Initial delay for the first attempt after failure, '.
