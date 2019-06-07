@@ -61,6 +61,8 @@ random number between original_delay * (1-jitter_factor) and original_delay *
 (1+jitter_factor). Jitters are usually added to avoid so-called "thundering
 herd" problem.
 
+The jitter will be applied to delay on failure as well as on success.
+
 _
     },
 );
