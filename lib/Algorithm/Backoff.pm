@@ -191,20 +191,6 @@ sub new {
     bless \%args, $class;
 }
 
-sub _success_or_failure {
-    my ($self, $is_success, $timestamp) = @_;
-
-    $self->{_last_timestamp} //= $timestamp;
-    $timestamp >= $self->{_last_timestamp} or
-        die ref($self).": Decreasing timestamp ".
-        "($self->{_last_timestamp} -> $timestamp)";
-    my $delay = $is_success ?
-        $self->_success($timestamp) : $self->_failure($timestamp);
-    $delay = $self->{max_delay}
-        if defined $self->{max_delay} && $delay > $self->{max_delay};
-    $delay;
-}
-
 sub _consider_actual_delay {
     my ($self, $delay, $timestamp) = @_;
 
@@ -215,6 +201,41 @@ sub _consider_actual_delay {
     $new_delay;
 }
 
+sub _add_jitter {
+    my ($self, $delay) = @_;
+    return $delay unless $delay && $self->{jitter_factor};
+    my $min = $delay * (1-$self->{jitter_factor});
+    my $max = $delay * (1+$self->{jitter_factor});
+    $min + ($max-$min)*rand();
+}
+
+sub _success_or_failure {
+    my ($self, $is_success, $timestamp) = @_;
+
+    $self->{_last_timestamp} //= $timestamp;
+    $timestamp >= $self->{_last_timestamp} or
+        die ref($self).": Decreasing timestamp ".
+        "($self->{_last_timestamp} -> $timestamp)";
+
+    my $delay = $is_success ?
+        $self->_success($timestamp) : $self->_failure($timestamp);
+
+    $delay = $self->_consider_actual_delay($delay, $timestamp)
+        if $self->{consider_actual_delay};
+
+    $delay = $self->_add_jitter($delay);
+
+    # keep between max(0, min_delay) and max_delay
+    $delay = $self->{max_delay}
+        if defined $self->{max_delay} && $delay > $self->{max_delay};
+    $delay = 0 if $delay < 0;
+    $delay = $self->{min_delay}
+        if defined $self->{min_delay} && $delay < $self->{min_delay};
+
+    $self->{_last_timestamp} = $timestamp;
+    $delay;
+}
+
 sub success {
     my ($self, $timestamp) = @_;
 
@@ -222,13 +243,7 @@ sub success {
 
     $self->{_attempts} = 0;
 
-    my $delay = $self->_success_or_failure(1, $timestamp);
-    $delay = $self->_consider_actual_delay($delay, $timestamp)
-        if $self->{consider_actual_delay};
-    $self->{_last_timestamp} = $timestamp;
-    return 0 if $delay < 0;
-
-    $self->_add_jitter($delay);
+    $self->_success_or_failure(1, $timestamp);
 }
 
 sub failure {
@@ -244,21 +259,7 @@ sub failure {
     return -1 if $self->{max_attempts} &&
         $self->{_attempts} >= $self->{max_attempts};
 
-    my $delay = $self->_success_or_failure(0, $timestamp);
-    $delay = $self->_consider_actual_delay($delay, $timestamp)
-        if $self->{consider_actual_delay};
-    $self->{_last_timestamp} = $timestamp;
-    return 0 if $delay < 0;
-
-    $self->_add_jitter($delay);
-}
-
-sub _add_jitter {
-    my ($self, $delay) = @_;
-    return $delay unless $delay && $self->{jitter_factor};
-    my $min = $delay * (1-$self->{jitter_factor});
-    my $max = $delay * (1+$self->{jitter_factor});
-    $min + ($max-$min)*rand();
+    $self->_success_or_failure(0, $timestamp);
 }
 
 1;
