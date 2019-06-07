@@ -95,6 +95,26 @@ sub _failure {
 
  $secs = $ab->success();   # =>  0 (= delay_on_success)
 
+Illustration using CLI L<show-backoff-delays> (10 failures followed by 3
+successes):
+
+ % show-backoff-delays -a Fibonacci --initial-delay1 0 --initial-delay2 1 \
+     0 0 0 0 0   0 0 0 0 0   1 1 1
+ 0
+ 1
+ 1
+ 2
+ 3
+ 5
+ 8
+ 13
+ 21
+ 34
+ 0
+ 0
+ 0
+
+
 =head1 DESCRIPTION
 
 This backoff algorithm calculates the next delay using Fibonacci sequence. For

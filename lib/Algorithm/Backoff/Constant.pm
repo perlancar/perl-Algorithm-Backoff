@@ -68,6 +68,20 @@ sub _failure {
  my $secs = $ab->success();           # => 0
  my $secs = $ab->failure();           # => 2
 
+Illustration using CLI L<show-backoff-delays> (5 failures followed by 3
+successes):
+
+ % show-backoff-delays -a Constant --delay 2 \
+     0 0 0 0 0   1 1 1
+ 2
+ 2
+ 2
+ 2
+ 2
+ 0
+ 0
+ 0
+
 
 =head1 DESCRIPTION
 

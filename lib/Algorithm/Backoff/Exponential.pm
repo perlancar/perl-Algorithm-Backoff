@@ -83,6 +83,25 @@ sub _failure {
  $secs = $ab->failure();   # => 100 ( min(5 * 2^5, 100) )
  $secs = $ab->success();   # => 0 (= delay_on_success)
 
+Illustration using CLI L<show-backoff-delays> (10 failures followed by 3
+successes):
+
+ % show-backoff-delays -a Exponential --initial-delay 1 --max-delay 200 \
+     0 0 0 0 0   0 0 0 0 0   1 1 1
+ 1
+ 2
+ 4
+ 8
+ 16
+ 32
+ 64
+ 128
+ 200
+ 200
+ 0
+ 0
+ 0
+
 
 =head1 DESCRIPTION
 
