@@ -91,6 +91,24 @@ sub _failure {
  $secs = $ab->failure();   # => 1.5 (1 * 1.5)
  $secs = $ab->success();   # => 0 (= delay_on_success)
 
+Illustration using CLI L<show-backoff-delays> (4 failures followed by 5
+successes, followed by 3 failures):
+
+ % show-backoff-delays -a MILD --initial-delay 3 --min-delay 1 \
+     --delay-multiple-on-failure 2 --delay-increment-on-success -5 \
+     0 0 0 0   1 1 1 1 1   0 0 0
+ 3
+ 6
+ 12
+ 24
+ 19
+ 14
+ 9
+ 4
+ 1
+ 2
+ 4
+
 
 =head1 DESCRIPTION
 
@@ -104,6 +122,7 @@ Upon success, the next delay is calculated as:
 
  D1 = initial_delay
  D2 = max(D1 + delay_increment_on_success, min_delay, initial_delay)
+ ...
 
 C<initial_delay>, C<delay_multiple_on_failure>, and
 C<delay_increment_on_success> are required. C<initial_delay> and C<min_delay>
