@@ -319,4 +319,9 @@ parameter has been exceeded).
 
 =head1 SEE ALSO
 
+L<Action::Retry> - Somehow I didn't find this module before writing
+Algorithm::Backoff. Otherwise I would probably not created Algorithm::Backoff.
+But Algorithm::Backoff offers an alternative interface, a lighter footprint (no
+Moo), and a couple more strategies.
+
 =cut
