@@ -325,8 +325,9 @@ code using various backoff strategies.
 L<App::AlgorithmBackoffUtils> - various CLI's related to Algorithm::Backoff.
 
 L<Action::Retry> - Somehow I didn't find this module before writing
-Algorithm::Backoff. Otherwise I would probably not created Algorithm::Backoff.
-But Algorithm::Backoff offers an alternative interface, a lighter footprint (no
-Moo), and a couple more strategies.
+Algorithm::Backoff. Otherwise I probably would not have created
+Algorithm::Backoff. But Algorithm::Backoff offers an alternative interface, some
+additional parameters (like delay on success and jitter factor), a lighter
+footprint (no Moo), and a couple more strategies.
 
 =cut
