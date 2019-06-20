@@ -90,7 +90,7 @@ sub _failure {
  $secs = $ab->success();   # =>  1   (max(2 * 0.2, 1))
  $secs = $ab->failure();   # =>  5   (1 + 4)
 
-Illustration using CLI L<show-backoff-delays> (4 failures followed by 5
+Illustration using CLI L<show-backoff-delays> (3 failures followed by 3
 successes, followed by 3 failures):
 
  % show-backoff-delays -a LILD --initial-delay 2 --min-delay 1 \
