@@ -194,10 +194,9 @@ sub new {
 sub _consider_actual_delay {
     my ($self, $delay, $timestamp) = @_;
 
-    $self->{_last_delay} //= 0;
+    $self->{_prev_delay} //= 0;
     my $actual_delay = $timestamp - $self->{_last_timestamp};
-    my $new_delay = $delay + $self->{_last_delay} - $actual_delay;
-    $self->{_last_delay} = $new_delay;
+    my $new_delay = $delay + $self->{_prev_delay} - $actual_delay;
     $new_delay;
 }
 
