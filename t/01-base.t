@@ -58,7 +58,8 @@ subtest "attr: consider_actual_delay" => sub {
 
     $ar = Algorithm::Backoff::Constant->new(
         consider_actual_delay => 1,
-        delay => 2,
+        delay     => 3,  # fake "pre-processor" delay
+        max_delay => 2,  # real delay
         max_attempts => 0,
     );
 
