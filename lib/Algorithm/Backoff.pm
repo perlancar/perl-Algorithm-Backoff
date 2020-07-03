@@ -1,6 +1,8 @@
 package Algorithm::Backoff;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;
@@ -276,8 +278,9 @@ sub failure {
      #delay_on_success => 0, # optional, default 0
  );
 
- # 2. log success/failure and get a new number of seconds to delay, timestamp is
- # optional but must be monotonically increasing.
+ # 2. log success/failure and get a new number of seconds to delay. if you don't
+ # want to log for the current time, you can pass a Unix timestamp as the
+ # argument, which should be monotonically increasing.
 
  my $secs = $ab->failure(); # => 2
  my $secs = $ab->success(); # => 0

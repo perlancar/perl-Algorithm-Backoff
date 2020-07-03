@@ -1,6 +1,8 @@
 package Algorithm::Backoff::Constant;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;

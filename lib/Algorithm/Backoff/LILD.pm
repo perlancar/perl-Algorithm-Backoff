@@ -1,6 +1,8 @@
 package Algorithm::Backoff::LILD;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;

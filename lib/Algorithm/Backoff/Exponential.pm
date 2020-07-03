@@ -1,6 +1,8 @@
 package Algorithm::Backoff::Exponential;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;
