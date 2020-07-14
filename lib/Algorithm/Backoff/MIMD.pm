@@ -1,6 +1,8 @@
 package Algorithm::Backoff::MIMD;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;

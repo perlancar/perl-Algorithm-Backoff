@@ -1,6 +1,8 @@
 package Algorithm::Backoff::Fibonacci;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;

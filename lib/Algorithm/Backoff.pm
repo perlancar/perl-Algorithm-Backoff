@@ -1,6 +1,8 @@
 package Algorithm::Backoff;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;
@@ -276,8 +278,10 @@ sub failure {
      #delay_on_success => 0, # optional, default 0
  );
 
- # 2. log success/failure and get a new number of seconds to delay, timestamp is
- # optional but must be monotonically increasing.
+ # 2. log success/failure and get a new number of seconds to delay. if you don't
+ # want to log for the current time, you can pass a timestamp (number of seconds
+ # passed since some reference value, like a Unix epoch) as the argument, which
+ # should be monotonically increasing.
 
  my $secs = $ab->failure(); # => 2
  my $secs = $ab->success(); # => 0
@@ -301,8 +305,8 @@ Usage:
  my $secs = $obj->success([ $timestamp ]);
 
 Log a successful attempt. If not specified, C<$timestamp> defaults to current
-time. Will return the suggested number of seconds to wait before doing another
-attempt.
+Unix timestamp. Will return the suggested number of seconds to wait before doing
+another attempt.
 
 =head2 failure
 
@@ -310,9 +314,9 @@ Usage:
 
  my $secs = $obj->failure([ $timestamp ]);
 
-Log a failed attempt. If not specified, C<$timestamp> defaults to current time.
-Will return the suggested number of seconds to wait before doing another
-attempt, or -1 if it suggests that one gives up (e.g. if C<max_attempts>
+Log a failed attempt. If not specified, C<$timestamp> defaults to current Unix
+timestamp. Will return the suggested number of seconds to wait before doing
+another attempt, or -1 if it suggests that one gives up (e.g. if C<max_attempts>
 parameter has been exceeded).
 
 
