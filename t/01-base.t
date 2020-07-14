@@ -57,6 +57,32 @@ subtest "attr: consider_actual_delay" => sub {
 
     $ar = Algorithm::Backoff::Constant->new(
         consider_actual_delay => 1,
+        delay => 2,
+        max_attempts => 0,
+    );
+
+    is($ar->failure(1), 2);
+
+    # we didn't wait, so the delay is now 2+2 = 4
+    is($ar->failure(1), 4);
+
+    # we now waited for 5 seconds, so delay is now 2-1 = 1
+    is($ar->failure(6), 1);
+
+    # we now waited for 2 seconds, so delay is now 2-1 = 1
+    is($ar->failure(8), 1);
+
+    # we now waited for 3 seconds, so delay is now 2-2 = 0
+    is($ar->failure(11), 0);
+};
+
+# This tests that consider_actual_delay uses the post-processed _prev_delay
+# value correctly.
+subtest "attr: consider_actual_delay + post-processing" => sub {
+    my $ar;
+
+    $ar = Algorithm::Backoff::Constant->new(
+        consider_actual_delay => 1,
         delay     => 3,  # "pre-processor" delay
         max_delay => 2,  # real delay
         max_attempts => 0,
