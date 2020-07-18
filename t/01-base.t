@@ -58,8 +58,7 @@ subtest "attr: consider_actual_delay" => sub {
 
     $ar = Algorithm::Backoff::Constant->new(
         consider_actual_delay => 1,
-        delay     => 3,  # fake "pre-processor" delay
-        max_delay => 2,  # real delay
+        delay => 2,
         max_attempts => 0,
     );
 
@@ -76,6 +75,34 @@ subtest "attr: consider_actual_delay" => sub {
 
     # we now waited for 3 seconds, so delay is now 2-2 = 0
     is($ar->failure(11), 0);
+};
+
+# This tests that consider_actual_delay uses the post-processed _prev_delay
+# value correctly.
+subtest "attr: consider_actual_delay + post-processing" => sub {
+    my $ar;
+
+    $ar = Algorithm::Backoff::Constant->new(
+        consider_actual_delay => 1,
+        delay     => 3,  # "pre-processor" delay
+        max_delay => 2,  # real delay
+        max_attempts => 0,
+    );
+
+    # first failure after 1 second
+    is($ar->failure(1), 2);
+
+    # 2s delay + instant failure, so the delay is now 3 -> max 2
+    is($ar->failure(1+2+0), 2);
+
+    # 2s delay + 2s failure, so the delay is now 3-2 = 1
+    is($ar->failure(3+2+2), 1);
+
+    # 1s delay + 5s failure, so delay is now 3-5 = -2 -> min 0
+    is($ar->failure(7+1+5), 0);
+
+    # 0s delay + instant failure, so delay is now 3 -> max 2
+    is($ar->failure(13+0+0), 2);
 };
 
 # XXX also test jitter_factor for each strategy
